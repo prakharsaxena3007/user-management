@@ -3,51 +3,48 @@ package com.example.usermanagement.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotNull;
-
+import lombok.Data;
 
 
 import java.time.LocalDateTime;
 
+@Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public class User {
 
-
-
-    @JsonProperty(value = "username" ,required = true)
-    @NotNull(message = "Username Cannot be Empty!!")
-    private String userName;
-    @JsonProperty(value = "password" ,required = true)
-    @NotNull(message = "Password Cannot be Empty!!")
+    private String username;
     private String password;
-    @JsonProperty(value = "firstName" ,required = true)
-    @NotNull(message = "First Name Cannot be Empty!!")
+    @JsonProperty(value = "first_name")
     private String firstName;
-    @JsonProperty(value = "lastName" ,required = true)
-    @NotNull(message = "LastName Cannot be Empty!!")
+    @JsonProperty(value = "last_name")
     private String lastName;
-    @JsonProperty(value = "role" ,required = true)
-    @NotNull(message = "Role Cannot be Empty!!")
+    @JsonProperty(value = "role")
     private String role;
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
+    @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
+    @JsonProperty("deleted_at")
     private LocalDateTime deletedAt;
 
-    public User(String userName, String password, String firstName, String lastName, String role) {
-        this.userName = userName;
+    public User(String username, String password, String firstName, String lastName, String role) {
+        this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
     }
 
-    public String getUserName() {
-        return userName;
+    public User() {
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getUserName() {
+        return username;
+    }
+
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
