@@ -1,12 +1,12 @@
 package com.example.usermanagement.implementation;
 
-import com.example.usermanagement.Model.Response;
+import com.example.usermanagement.dto.Response;
 import com.example.usermanagement.Model.User;
 import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.dto.CreateUserdto;
 import com.example.usermanagement.dto.UpdateUserDto;
 import com.example.usermanagement.exception.UserAlreadyExistsException;
-import com.example.usermanagement.exception.UserExisting;
+import com.example.usermanagement.utility.UserExisting;
 import com.example.usermanagement.exception.UserNotExistException;
 import com.example.usermanagement.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class UserService {
 
     public Response create(CreateUserdto createUserdto, List<User> userList) throws UserAlreadyExistsException {
         for (User user : userList) {
-            if (user.getUserName().equals(createUserdto.getUsername())) {
+            if (user.getUsername().equals(createUserdto.getUsername())) {
                 throw new UserAlreadyExistsException(String.format(UserConstants.USER_ALREADY_EXISTS, createUserdto.getUsername()));
             }
         }
@@ -42,9 +42,9 @@ public class UserService {
         return userMapper.getUserMapper(username, userList);
     }
 
-    public Response deleteUser(String username, List<User> userList) throws UserNotExistException {
+    public void deleteUser(String username, List<User> userList) throws UserNotExistException {
         userExisting.ifUserExist(userList, username);
-        return userMapper.deleteUserMapper(username, userList);
+        userMapper.deleteUserMapper(username, userList);
 
     }
 

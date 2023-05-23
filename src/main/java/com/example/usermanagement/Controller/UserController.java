@@ -1,9 +1,8 @@
 package com.example.usermanagement.Controller;
 
 
-import com.example.usermanagement.Model.Response;
+import com.example.usermanagement.dto.Response;
 import com.example.usermanagement.Model.User;
-import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.dto.CreateUserdto;
 import com.example.usermanagement.dto.UpdateUserDto;
 import com.example.usermanagement.exception.CustomException;
@@ -33,7 +32,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(createUserdto, userList));
     }
 
-
     //Update a user
     @PutMapping("/{username}")
     public ResponseEntity<Response> updateUser(@PathVariable String username, @RequestBody UpdateUserDto updateUserDto) throws CustomException {
@@ -42,8 +40,9 @@ public class UserController {
 
     //Delete a user
     @DeleteMapping("/{username}")
-    public ResponseEntity<Response> deleteUser(@PathVariable String username) throws CustomException {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userService.deleteUser(username, userList));
+    public ResponseEntity<Void> deleteUser(@PathVariable String username) throws CustomException {
+        userService.deleteUser(username, userList);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // Get a USer
@@ -57,7 +56,7 @@ public class UserController {
     public ResponseEntity<List<Response>> getAllUsers() throws CustomException {
         List<Response> usersList = userService.getAll(userList);
         if (userList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(usersList);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(usersList);
     }

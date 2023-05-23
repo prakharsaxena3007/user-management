@@ -1,13 +1,12 @@
 package com.example.usermanagement.mapper;
 
-import com.example.usermanagement.Model.Response;
+import com.example.usermanagement.dto.Response;
 import com.example.usermanagement.Model.User;
 import com.example.usermanagement.dto.CreateUserdto;
 import com.example.usermanagement.dto.UpdateUserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +27,7 @@ public class UserMapper {
     public Response updateMapper(UpdateUserDto updateUserDto, List<User> userList, String username) {
         Response response = new Response();
         for (User user : userList) {
-            if (user.getUserName().equals(username)) {
+            if (user.getUsername().equals(username)) {
                 Optional<User> userOptional = Optional.of(user);
                 Optional.ofNullable(updateUserDto.getFirstName()).ifPresent(user::setFirstName);
                 Optional.ofNullable(updateUserDto.getLastName()).ifPresent(user::setLastName);
@@ -44,7 +43,7 @@ public class UserMapper {
     public Response getUserMapper(String username, List<User> userList) {
         Response response = new Response();
         for (User user : userList) {
-            if (user.getUserName().equals(username)) {
+            if (user.getUsername().equals(username)) {
                 response = modelMapper.map(user, Response.class);
             }
         }
@@ -53,7 +52,7 @@ public class UserMapper {
 
     public Response deleteUserMapper(String username, List<User> userList) {
         Response response = new Response();
-        userList.removeIf(user -> user.getUserName().equals(username));
+        userList.removeIf(user -> user.getUsername().equals(username));
         return response;
     }
 
