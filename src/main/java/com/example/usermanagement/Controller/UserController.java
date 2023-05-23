@@ -2,7 +2,6 @@ package com.example.usermanagement.Controller;
 
 
 import com.example.usermanagement.dto.Response;
-import com.example.usermanagement.Model.User;
 import com.example.usermanagement.dto.CreateUserdto;
 import com.example.usermanagement.dto.UpdateUserDto;
 import com.example.usermanagement.exception.CustomException;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,7 +19,6 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private List<User> userList = new ArrayList<>();
 
     @Autowired
     UserService userService;
@@ -29,33 +26,33 @@ public class UserController {
     //Create user
     @PostMapping()
     public ResponseEntity<Response> createUser(@Valid @RequestBody CreateUserdto createUserdto) throws CustomException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(createUserdto, userList));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(createUserdto));
     }
 
     //Update a user
-    @PutMapping("/{username}")
-    public ResponseEntity<Response> updateUser(@PathVariable String username, @RequestBody UpdateUserDto updateUserDto) throws CustomException {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.update(updateUserDto, userList, username));
+    @PutMapping("/{userId}")
+    public ResponseEntity<Response> updateUser(@PathVariable Long userId, @RequestBody UpdateUserDto updateUserDto) throws CustomException {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.update(updateUserDto, userId));
     }
 
     //Delete a user
-    @DeleteMapping("/{username}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String username) throws CustomException {
-        userService.deleteUser(username, userList);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) throws CustomException {
+        userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // Get a USer
-    @GetMapping("/{username}")
-    public ResponseEntity<Response> getUser(@PathVariable String username) throws CustomException {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username, userList));
+    @GetMapping("/{userId}")
+    public ResponseEntity<Response> getUser(@PathVariable Long userId) throws CustomException {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(userId));
     }
 
     //Get all user
     @GetMapping
     public ResponseEntity<List<Response>> getAllUsers() throws CustomException {
-        List<Response> usersList = userService.getAll(userList);
-        if (userList.isEmpty()) {
+        List<Response> usersList = userService.getAll();
+        if (usersList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(usersList);

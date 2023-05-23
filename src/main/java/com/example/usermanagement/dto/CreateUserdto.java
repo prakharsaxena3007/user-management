@@ -1,11 +1,14 @@
 package com.example.usermanagement.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class CreateUserdto {
+
+    private Long id;
 
     @JsonProperty(value = "username", required = true)
     @NotNull(message = "Username is required!")

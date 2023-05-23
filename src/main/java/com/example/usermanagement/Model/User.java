@@ -1,31 +1,43 @@
 package com.example.usermanagement.Model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.Data;
-
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
+@Entity
 @Data
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@Table(name = "user",schema = "public")
 public class User {
 
-    private String username;
-    private String password;
-    @JsonProperty(value = "first_name")
-    private String firstName;
-    @JsonProperty(value = "last_name")
-    private String lastName;
-    @JsonProperty(value = "role")
-    private String role;
-    @JsonProperty("created_at")
-    private LocalDateTime createdAt;
-    @JsonProperty("updated_at")
-    private LocalDateTime updatedAt;
-    @JsonProperty("deleted_at")
-    private LocalDateTime deletedAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(name = "username", nullable = false)
+    private String username;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+
+    @Column(name = "role", nullable = false)
+    private String role;
+
+    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }
