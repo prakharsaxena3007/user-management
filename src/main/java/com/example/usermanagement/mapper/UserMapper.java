@@ -6,7 +6,7 @@ import com.example.usermanagement.dto.UpdateUserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public class UserMapper {
             Optional.ofNullable(updateUserDto.getLastName()).ifPresent(existingUser::setLastName);
             Optional.ofNullable(updateUserDto.getPassword()).ifPresent(existingUser::setPassword);
             Optional.ofNullable(updateUserDto.getRole()).ifPresent(existingUser::setRole);
-            user.get().setUpdatedAt(LocalDateTime.now());
+            user.get().setUpdatedAt(updateUserDto.getUpdatedAt());
         });
 
         return modelMapper.map(user, Response.class);
@@ -39,9 +39,8 @@ public class UserMapper {
         return response;
     }
 
-    public void deleteUserMapper(Optional<User> userOptional, User user) {
-        userOptional.ifPresent(user1 -> modelMapper.map(user1, user));
-        modelMapper.map(user, Response.class);
+    public void deleteUserMapper(Optional<User> userOptional) {
+        modelMapper.map(userOptional.get(), Response.class);
     }
 
     public List<Response> getAllUserMapper(List<User> userList) {

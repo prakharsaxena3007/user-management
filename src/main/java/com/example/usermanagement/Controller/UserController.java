@@ -4,7 +4,6 @@ package com.example.usermanagement.Controller;
 import com.example.usermanagement.dto.Response;
 import com.example.usermanagement.dto.CreateUserdto;
 import com.example.usermanagement.dto.UpdateUserDto;
-import com.example.usermanagement.exception.CustomException;
 import com.example.usermanagement.implementation.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,32 +24,32 @@ public class UserController {
 
     //Create user
     @PostMapping()
-    public ResponseEntity<Response> createUser(@Valid @RequestBody CreateUserdto createUserdto) throws CustomException {
+    public ResponseEntity<Response> createUser(@Valid @RequestBody CreateUserdto createUserdto){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(createUserdto));
     }
 
     //Update a user
     @PutMapping("/{userId}")
-    public ResponseEntity<Response> updateUser(@PathVariable Long userId, @RequestBody UpdateUserDto updateUserDto) throws CustomException {
+    public ResponseEntity<Response> updateUser(@PathVariable Long userId, @RequestBody UpdateUserDto updateUserDto) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(updateUserDto, userId));
     }
 
     //Delete a user
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) throws CustomException {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // Get a USer
     @GetMapping("/{userId}")
-    public ResponseEntity<Response> getUser(@PathVariable Long userId) throws CustomException {
+    public ResponseEntity<Response> getUser(@PathVariable Long userId){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(userId));
     }
 
     //Get all user
     @GetMapping
-    public ResponseEntity<List<Response>> getAllUsers() throws CustomException {
+    public ResponseEntity<List<Response>> getAllUsers() {
         List<Response> usersList = userService.getAll();
         if (usersList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
