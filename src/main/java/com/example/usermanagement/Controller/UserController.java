@@ -50,11 +50,7 @@ public class UserController {
     //Get all user
     @GetMapping
     public ResponseEntity<List<Response>> getAllUsers() {
-        List<Response> usersList = userService.getAll();
-        if (usersList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(usersList);
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getAll());
     }
 }
 

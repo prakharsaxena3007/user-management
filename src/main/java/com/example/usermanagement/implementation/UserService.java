@@ -31,7 +31,7 @@ public class UserService {
     public Response create(CreateUserdto createUserdto) throws UserAlreadyExistsException {
         User user = userRepository.findByUsername(createUserdto.getUsername());
         if (user != null) {
-            throw new UserAlreadyExistsException(String.format(UserConstants.USER_ALREADY_EXISTS, user));
+            throw new UserAlreadyExistsException(String.format(UserConstants.USER_ALREADY_EXISTS, user.getUsername()));
         }
         user = userMapper.mapToUser(createUserdto);
         userRepository.save(user);
@@ -43,24 +43,26 @@ public class UserService {
         if(user.isEmpty()){
             throw new UserNotExistException(UserConstants.USER_NOT_FOUND);
         }
-        userRepository.save(user.orElseThrow(() -> new UserNotExistException(UserConstants.USER_NOT_FOUND)));
+        userRepository.save(user.get());
         return userMapper.updateMapper(updateUserDto, user);
     }
 
-    public Response getUser(Long userId) throws UserNotExistException {
-        userExisting.ifUserExist(userId);
-        return userMapper.getUserMapper(userRepository.findById(userId));
+    public Response getUser(Long userId){
+        User userexist = userExisting.ifUserExist(userId);
+        return userMapper.getUserMapper(Optional.of(userexist));
     }
 
-    public void deleteUser(Long userId) throws UserNotExistException {
-        Optional<User> user = userRepository.findById(userId);
-        userExisting.ifUserExist(userId);
+    public void deleteUser(Long userId){
+        Optional<User> user = Optional.of(userExisting.ifUserExist(userId));
         userMapper.deleteUserMapper(user);
         userRepository.deleteById(userId);
     }
 
-    public List<Response> getAll() {
+    public List<Response> getAll() throws UserNotExistException {
         List<User> userList = userRepository.findAll();
+        if (userList.isEmpty()) {
+            throw new UserNotExistException(UserConstants.NO_USER);
+        }
         return userMapper.getAllUserMapper(userList);
     }
 }

@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 @Data
 public class UpdateUserDto {
 
-
-    private Long id;
     private String password;
 
     @JsonProperty("first_name")
