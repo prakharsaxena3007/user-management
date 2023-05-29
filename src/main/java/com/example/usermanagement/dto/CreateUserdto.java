@@ -1,5 +1,6 @@
 package com.example.usermanagement.dto;
 
+import com.example.usermanagement.Model.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class CreateUserdto {
     private String lastName;
 
     @JsonProperty(value = "role", required = true)
-    @NotNull(message = "Role is required!")
-    private String role;
+    @NotNull
+    private Role role = Role.USER;
+
 }

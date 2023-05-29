@@ -1,11 +1,7 @@
 package com.example.usermanagement.Controller;
 
-
-import com.example.usermanagement.dto.Response;
-import com.example.usermanagement.dto.CreateUserdto;
-import com.example.usermanagement.dto.UpdateUserDto;
+import com.example.usermanagement.dto.*;
 import com.example.usermanagement.implementation.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,42 +11,42 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/v1/users")
 public class UserController {
 
 
     @Autowired
     UserService userService;
 
-    //Create user
-    @PostMapping()
-    public ResponseEntity<Response> createUser(@Valid @RequestBody CreateUserdto createUserdto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(createUserdto));
-    }
-
     //Update a user
-    @PutMapping("/{userId}")
-    public ResponseEntity<Response> updateUser(@PathVariable Long userId, @RequestBody UpdateUserDto updateUserDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.update(updateUserDto, userId));
+    @PutMapping("/{username}")
+    public ResponseEntity<Response> updateUser(@PathVariable String username, @RequestBody UpdateUserDto updateUserDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.update(updateUserDto, username));
     }
 
     //Delete a user
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
+        userService.deleteUser(username);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // Get a USer
-    @GetMapping("/{userId}")
-    public ResponseEntity<Response> getUser(@PathVariable Long userId){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(userId));
+    @GetMapping("/{username}")
+    public ResponseEntity<Response> getUser(@PathVariable String username) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
     }
 
     //Get all user
     @GetMapping
     public ResponseEntity<List<Response>> getAllUsers() {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAll());
+    }
+
+    @PostMapping("/update_password")
+    public ResponseEntity<String> updatePassword(@RequestBody UserPasswordDto userPasswordDto) {
+        userService.updatePassword(userPasswordDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
 

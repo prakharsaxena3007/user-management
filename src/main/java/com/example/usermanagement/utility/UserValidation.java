@@ -12,10 +12,10 @@ public class UserValidation {
 
     @Autowired
     UserRepository userRepository;
-    public User ifUserExist(Long userId) throws UserNotExistException {
+    public User ifUserExist(String username) throws UserNotExistException {
         return userRepository.findAll().stream()
-                .filter(user -> user.getId().equals(userId)).findFirst()
-                .orElseThrow(() -> new UserNotExistException(String.format(UserConstants.USER_NOT_FOUND, userId)));
+                .filter(user -> user.getUsername().equals(username)).findFirst()
+                .orElseThrow(() -> new UserNotExistException(String.format(UserConstants.USER_NOT_FOUND, username)));
     }
 
 }

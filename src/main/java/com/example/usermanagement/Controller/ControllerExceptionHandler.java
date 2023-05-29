@@ -1,6 +1,7 @@
 package com.example.usermanagement.Controller;
 
 
+import com.example.usermanagement.exception.PasswordDoesNotMatchException;
 import com.example.usermanagement.exception.UserAlreadyExistsException;
 import com.example.usermanagement.exception.UserNotExistException;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,11 @@ public class ControllerExceptionHandler {
     public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException existsException) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(existsException.getMessage());
 
+    }
+
+    @ExceptionHandler(PasswordDoesNotMatchException.class)
+    public ResponseEntity<String> handlePasswordDoesNotMatchException(PasswordDoesNotMatchException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
 

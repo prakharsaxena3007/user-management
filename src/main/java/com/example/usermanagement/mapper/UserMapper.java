@@ -1,5 +1,6 @@
 package com.example.usermanagement.mapper;
 
+import com.example.usermanagement.dto.AuthenticationResponse;
 import com.example.usermanagement.dto.Response;
 import com.example.usermanagement.Model.User;
 import com.example.usermanagement.dto.UpdateUserDto;
@@ -15,16 +16,14 @@ public class UserMapper {
 
     ModelMapper modelMapper = new ModelMapper();
 
-    public Response createMapper(User user) {
-        return modelMapper.map(user, Response.class);
+    public AuthenticationResponse createMapper(User user) {
+        return modelMapper.map(user, AuthenticationResponse.class);
     }
 
     public Response updateMapper(UpdateUserDto updateUserDto, Optional<User> user) {
         user.ifPresent(existingUser -> {
             Optional.ofNullable(updateUserDto.getFirstName()).ifPresent(existingUser::setFirstName);
             Optional.ofNullable(updateUserDto.getLastName()).ifPresent(existingUser::setLastName);
-            Optional.ofNullable(updateUserDto.getPassword()).ifPresent(existingUser::setPassword);
-            Optional.ofNullable(updateUserDto.getRole()).ifPresent(existingUser::setRole);
             user.get().setUpdatedAt(updateUserDto.getUpdatedAt());
         });
 
