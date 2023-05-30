@@ -1,7 +1,7 @@
-package com.example.usermanagement.implementation;
+package com.example.usermanagement.service;
 
 import com.example.usermanagement.dto.Response;
-import com.example.usermanagement.Model.User;
+import com.example.usermanagement.model.User;
 import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.dto.CreateUserdto;
 import com.example.usermanagement.dto.UpdateUserDto;
@@ -35,27 +35,21 @@ public class UserService {
         }
         user = userMapper.mapToUser(createUserdto);
         userRepository.save(user);
-        return userMapper.createMapper(user);
+        return userMapper.responseToUserMapper(user);
     }
 
     public Response update(UpdateUserDto updateUserDto, Long userId) throws UserNotExistException {
-        Optional<User> user = userRepository.findById(userId);
-        if(user.isEmpty()){
-            throw new UserNotExistException(UserConstants.USER_NOT_FOUND);
-        }
-        userRepository.save(user.get());
-        return userMapper.updateMapper(updateUserDto, user);
+        User user = userExisting.ifUserExist(userId);
+        userMapper.updateMapper(updateUserDto, Optional.of(user));
+        return userMapper.responseToUserMapper(userRepository.save(user));
     }
 
     public Response getUser(Long userId){
-        User userexist = userExisting.ifUserExist(userId);
-        return userMapper.getUserMapper(Optional.of(userexist));
+        return userMapper.responseToUserMapper(userExisting.ifUserExist(userId));
     }
 
     public void deleteUser(Long userId){
-        Optional<User> user = Optional.of(userExisting.ifUserExist(userId));
-        userMapper.deleteUserMapper(user);
-        userRepository.deleteById(userId);
+        userRepository.delete(userExisting.ifUserExist(userId));
     }
 
     public List<Response> getAll() throws UserNotExistException {

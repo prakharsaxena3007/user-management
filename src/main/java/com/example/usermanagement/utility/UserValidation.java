@@ -1,6 +1,6 @@
 package com.example.usermanagement.utility;
 
-import com.example.usermanagement.Model.User;
+import com.example.usermanagement.model.User;
 import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.exception.UserNotExistException;
 import com.example.usermanagement.repository.UserRepository;
@@ -15,8 +15,7 @@ public class UserValidation {
     public User ifUserExist(Long userId) throws UserNotExistException {
         return userRepository.findAll().stream()
                 .filter(user -> user.getId().equals(userId)).findFirst()
-                .orElseThrow(() -> new UserNotExistException(String.format(UserConstants.USER_NOT_FOUND, userId)));
+                .orElseThrow(() -> new UserNotExistException(String.format(UserConstants.USER_ID_NOT_FOUND, userId)));
     }
-
 }
 

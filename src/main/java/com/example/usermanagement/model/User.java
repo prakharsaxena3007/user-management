@@ -1,4 +1,4 @@
-package com.example.usermanagement.Model;
+package com.example.usermanagement.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
