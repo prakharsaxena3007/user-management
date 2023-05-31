@@ -1,6 +1,6 @@
 package com.example.usermanagement.config;
 
-import com.example.usermanagement.implementation.JwtService;
+import com.example.usermanagement.service.JwtService;
 import com.example.usermanagement.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

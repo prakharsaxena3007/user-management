@@ -1,7 +1,9 @@
-package com.example.usermanagement.implementation;
+package com.example.usermanagement.service;
+
 
 import com.example.usermanagement.dto.*;
-import com.example.usermanagement.Model.User;
+import com.example.usermanagement.dto.Response;
+import com.example.usermanagement.model.User;
 import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.exception.PasswordDoesNotMatchException;
 import com.example.usermanagement.exception.UserAlreadyExistsException;
@@ -22,9 +24,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserMapper userMapper;
-
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
     private final UserValidation userExisting;
     private final JwtService jwtService;
@@ -43,13 +43,9 @@ public class UserService {
         User user = userRepository.findByUsername(createUserdto.getUsername());
         if (user != null) {
             throw new UserAlreadyExistsException(String.format(UserConstants.USER_ALREADY_EXISTS, user.getUsername()));
-
         }
         createUserdto.setPassword(passwordEncoder.encode(createUserdto.getPassword()));
-        user = userMapper.mapToUser(createUserdto);
-        user = userRepository.save(user);
-
-        return userMapper.createMapper(user);
+        return userMapper.createUserMapper(userRepository.save(userMapper.mapToUser(createUserdto)));
     }
 
     public AuthTokenResponse authenticate(LoginDto loginDto) {
@@ -63,23 +59,18 @@ public class UserService {
     }
 
     public Response update(UpdateUserDto updateUserDto, String username) throws UserNotExistException {
-        Optional<User> user = userRepository.findUserByUsername(username);
-        if (user.isEmpty()) {
-            throw new UserNotExistException(UserConstants.USER_NOT_FOUND);
-        }
-        userRepository.save(user.get());
-        return userMapper.updateMapper(updateUserDto, user);
+        User user = userExisting.ifUserExist(username);
+        userMapper.updateMapper(updateUserDto, Optional.of(user));
+        return  userMapper.responseToUserMapper(userRepository.save(user));
     }
 
     public Response getUser(String username) {
         User userexist = userExisting.ifUserExist(username);
-        return userMapper.getUserMapper(Optional.of(userexist));
+        return userMapper.responseToUserMapper(userexist);
     }
 
     public void deleteUser(String username) {
-        Optional<User> user = Optional.of(userExisting.ifUserExist(username));
-        userMapper.deleteUserMapper(user);
-        userRepository.delete(user.get());
+        userRepository.delete(userExisting.ifUserExist(username));
     }
 
     public List<Response> getAll() throws UserNotExistException {
@@ -91,7 +82,6 @@ public class UserService {
     }
 
     public boolean updatePassword(UserPasswordDto userPasswordDto) throws PasswordDoesNotMatchException {
-
         User user = userRepository.findByUsername(userPasswordDto.getUsername());
             if (PasswordHelper.matchPassword(userPasswordDto.getOldPassword(), user.getPassword())) {
                 String newEncryptedPassword = PasswordHelper.hashPassword(userPasswordDto.getNewPassword());

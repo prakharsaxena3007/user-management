@@ -1,10 +1,10 @@
-package com.example.usermanagement.Controller;
+package com.example.usermanagement.controller;
 
 import com.example.usermanagement.dto.AuthTokenResponse;
 import com.example.usermanagement.dto.AuthenticationResponse;
 import com.example.usermanagement.dto.CreateUserdto;
 import com.example.usermanagement.dto.LoginDto;
-import com.example.usermanagement.implementation.UserService;
+import com.example.usermanagement.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

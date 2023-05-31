@@ -1,7 +1,6 @@
 package com.example.usermanagement.dto;
 
-import com.example.usermanagement.Model.Role;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.example.usermanagement.model.Role;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.EnumType;
@@ -10,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Data

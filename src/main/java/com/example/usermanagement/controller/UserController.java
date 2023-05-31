@@ -1,7 +1,9 @@
-package com.example.usermanagement.Controller;
+package com.example.usermanagement.controller;
 
 import com.example.usermanagement.dto.*;
-import com.example.usermanagement.implementation.UserService;
+import com.example.usermanagement.dto.Response;
+import com.example.usermanagement.dto.UpdateUserDto;
+import com.example.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

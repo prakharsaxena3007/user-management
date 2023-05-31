@@ -1,6 +1,7 @@
-package com.example.usermanagement.Controller;
+package com.example.usermanagement.controller;
 
 
+import com.example.usermanagement.dto.BaseErrorDto;
 import com.example.usermanagement.exception.PasswordDoesNotMatchException;
 import com.example.usermanagement.exception.UserAlreadyExistsException;
 import com.example.usermanagement.exception.UserNotExistException;
@@ -10,30 +11,31 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleMethodArgumemtNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<BaseErrorDto> handleMethodArgumemtNotValidException(MethodArgumentNotValidException ex) {
         String exceptionMessage = ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(exceptionMessage);
+                .body(new BaseErrorDto(exceptionMessage));
     }
 
     @ExceptionHandler(UserNotExistException.class)
-    public ResponseEntity<String> handleUserNotExistsException(UserNotExistException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<BaseErrorDto> handleUserNotExistsException(UserNotExistException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseErrorDto(ex.getMessage()));
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException existsException) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(existsException.getMessage());
+    public ResponseEntity<BaseErrorDto> handleUserAlreadyExistsException(UserAlreadyExistsException existsException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new BaseErrorDto(existsException.getMessage()));
 
     }
 
     @ExceptionHandler(PasswordDoesNotMatchException.class)
-    public ResponseEntity<String> handlePasswordDoesNotMatchException(PasswordDoesNotMatchException ex){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<BaseErrorDto> handlePasswordDoesNotMatchException(PasswordDoesNotMatchException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseErrorDto(ex.getMessage()));
     }
 
 

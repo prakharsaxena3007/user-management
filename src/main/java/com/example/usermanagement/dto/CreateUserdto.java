@@ -1,6 +1,6 @@
 package com.example.usermanagement.dto;
 
-import com.example.usermanagement.Model.Role;
+import com.example.usermanagement.model.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
