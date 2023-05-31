@@ -1,13 +1,11 @@
 package com.example.usermanagement.mapper;
 
+import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.dto.Response;
-import com.example.usermanagement.Model.User;
-import com.example.usermanagement.dto.CreateUserdto;
+import com.example.usermanagement.model.User;
 import com.example.usermanagement.dto.UpdateUserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,47 +14,26 @@ public class UserMapper {
 
     ModelMapper modelMapper = new ModelMapper();
 
-    public Response createMapper(CreateUserdto createUserdto, List<User> userList) {
-        User user = modelMapper.map(createUserdto, User.class);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-        userList.add(user);
+    public Response responseToUserMapper(User user) {
         return modelMapper.map(user, Response.class);
     }
 
-    public Response updateMapper(UpdateUserDto updateUserDto, List<User> userList, String username) {
-        Response response = new Response();
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                Optional<User> userOptional = Optional.of(user);
-                Optional.ofNullable(updateUserDto.getFirstName()).ifPresent(user::setFirstName);
-                Optional.ofNullable(updateUserDto.getLastName()).ifPresent(user::setLastName);
-                Optional.ofNullable(updateUserDto.getPassword()).ifPresent(user::setPassword);
-                Optional.ofNullable(updateUserDto.getRole()).ifPresent(user::setRole);
-                user.setUpdatedAt(LocalDateTime.now());
-                response = modelMapper.map(user, Response.class);
-            }
-        }
-        return response;
-    }
+    public Response updateMapper(UpdateUserDto updateUserDto, Optional<User> user) {
+        user.ifPresent(existingUser -> {
+            Optional.ofNullable(updateUserDto.getFirstName()).ifPresent(existingUser::setFirstName);
+            Optional.ofNullable(updateUserDto.getLastName()).ifPresent(existingUser::setLastName);
+            Optional.ofNullable(updateUserDto.getPassword()).ifPresent(existingUser::setPassword);
+            Optional.ofNullable(updateUserDto.getRole()).ifPresent(existingUser::setRole);
+            user.get().setUpdatedAt(updateUserDto.getUpdatedAt());
+        });
 
-    public Response getUserMapper(String username, List<User> userList) {
-        Response response = new Response();
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                response = modelMapper.map(user, Response.class);
-            }
-        }
-        return response;
+        return user.map(this::responseToUserMapper).orElseThrow(()-> new RuntimeException(UserConstants.USER_NOT_FOUND));
     }
-
-    public Response deleteUserMapper(String username, List<User> userList) {
-        Response response = new Response();
-        userList.removeIf(user -> user.getUsername().equals(username));
-        return response;
-    }
-
     public List<Response> getAllUserMapper(List<User> userList) {
-        return userList.stream().map(user -> modelMapper.map(user, Response.class)).toList();
+        return userList.stream().map(this::responseToUserMapper).toList();
+    }
+
+    public <T> User mapToUser(T dto) {
+        return modelMapper.map(dto, User.class);
     }
 }

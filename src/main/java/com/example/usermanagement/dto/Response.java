@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response {
 
+    private Long id;
+
     @JsonProperty("username")
     private String username;
     @JsonProperty("first_name")

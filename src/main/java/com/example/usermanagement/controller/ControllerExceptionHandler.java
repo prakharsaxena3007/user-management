@@ -1,4 +1,4 @@
-package com.example.usermanagement.Controller;
+package com.example.usermanagement.controller;
 
 
 import com.example.usermanagement.exception.UserAlreadyExistsException;
