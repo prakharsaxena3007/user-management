@@ -3,8 +3,8 @@ package com.example.usermanagement.service;
 
 import com.example.usermanagement.dto.*;
 import com.example.usermanagement.dto.ResponseDto;
-import com.example.usermanagement.exception.EmptyFieldsException;
 import com.example.usermanagement.exception.InvalidPasswordException;
+import com.example.usermanagement.exception.UnauthorizedException;
 import com.example.usermanagement.model.User;
 import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.exception.UserAlreadyExistsException;
@@ -13,10 +13,13 @@ import com.example.usermanagement.utility.PasswordHelper;
 import com.example.usermanagement.utility.UserValidation;
 import com.example.usermanagement.exception.UserNotExistException;
 import com.example.usermanagement.mapper.UserMapper;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +42,7 @@ public class UserService {
         this.authenticationManager = authenticationManager;
     }
 
-    public ResponseDto create(CreateUserDto createUserdto) throws UserAlreadyExistsException, EmptyFieldsException {
+    public ResponseDto create(CreateUserDto createUserdto) throws UserAlreadyExistsException {
         User user = userRepository.findByUsername(createUserdto.getUsername());
         if (user != null) {
             throw new UserAlreadyExistsException(String.format(UserConstants.USER_ALREADY_EXISTS, user.getUsername()));
@@ -48,7 +51,7 @@ public class UserService {
         return userMapper.responseToUserMapper(userRepository.save(userMapper.mapToUser(createUserdto)));
     }
 
-    public AuthTokenResponseDto authenticate(LoginDto loginDto) {
+    public AuthTokenResponseDto authenticate(LoginDto loginDto){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
         User user = userRepository.findByUsername(loginDto.getUsername());

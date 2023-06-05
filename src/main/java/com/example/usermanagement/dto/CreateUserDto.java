@@ -25,7 +25,6 @@ public class CreateUserDto {
     private String lastName;
 
     @JsonProperty(value = "role", required = true)
-    @NotEmpty(message = "Role is required")
     private Role role = Role.USER;
 
 }
