@@ -1,6 +1,7 @@
 package com.example.usermanagement.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -21,15 +22,19 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(name = "username", nullable = false)
+    @NotEmpty
     private String username;
 
     @Column(name = "password", nullable = false)
+    @NotEmpty
     private String password;
 
     @Column(name = "first_name", nullable = false)
+    @NotEmpty
     private String firstName;
 
     @Column(name = "last_name", nullable = false)
+    @NotEmpty
     private String lastName;
 
     @Column(name = "role", nullable = false)

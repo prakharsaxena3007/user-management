@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class LoginDto {
 
-    @NotEmpty
+    @NotEmpty(message = "Username cannot be null or empty")
     private String username;
 
-    @NotEmpty
+    @NotEmpty(message = "Password cannot be null or empty")
     private String password;
 }

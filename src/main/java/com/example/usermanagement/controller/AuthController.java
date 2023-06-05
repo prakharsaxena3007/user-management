@@ -1,9 +1,6 @@
 package com.example.usermanagement.controller;
 
-import com.example.usermanagement.dto.AuthTokenResponse;
-import com.example.usermanagement.dto.AuthenticationResponse;
-import com.example.usermanagement.dto.CreateUserdto;
-import com.example.usermanagement.dto.LoginDto;
+import com.example.usermanagement.dto.*;
 import com.example.usermanagement.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +20,13 @@ public class AuthController {
     }
 
     @PostMapping(value = "register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody CreateUserdto createUserdto) {
+    public ResponseEntity<ResponseDto> register(@RequestBody CreateUserDto createUserdto) {
         return new ResponseEntity<>(userService.create(createUserdto), HttpStatus.CREATED);
     }
 
     @PostMapping("authenticate")
-    public ResponseEntity<AuthTokenResponse> authenticate(
+    public ResponseEntity<AuthTokenResponseDto> authenticate(
             @RequestBody LoginDto loginDto) {
-        return new ResponseEntity<>(userService.authenticate(loginDto), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(userService.authenticate(loginDto), HttpStatus.OK);
     }
 }

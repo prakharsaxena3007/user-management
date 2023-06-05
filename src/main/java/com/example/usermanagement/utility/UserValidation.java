@@ -4,19 +4,21 @@ import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.exception.UserNotExistException;
 import com.example.usermanagement.model.User;
 import com.example.usermanagement.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserValidation {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public User ifUserExist(String username) throws UserNotExistException {
+    public UserValidation(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User ifUserExist(Long id) throws UserNotExistException {
         return userRepository.findAll().stream()
-                .filter(user -> user.getUsername().equals(username)).findFirst()
-                .orElseThrow(() -> new UserNotExistException(String.format(UserConstants.USER_NOT_FOUND, username)));
+                .filter(user -> user.getId().equals(id)).findFirst()
+                .orElseThrow(() -> new UserNotExistException(String.format(UserConstants.USERID_NOT_FOUND, id)));
     }
 }
 

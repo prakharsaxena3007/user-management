@@ -2,10 +2,11 @@ package com.example.usermanagement.service;
 
 
 import com.example.usermanagement.dto.*;
-import com.example.usermanagement.dto.Response;
+import com.example.usermanagement.dto.ResponseDto;
+import com.example.usermanagement.exception.EmptyFieldsException;
+import com.example.usermanagement.exception.InvalidPasswordException;
 import com.example.usermanagement.model.User;
 import com.example.usermanagement.constants.UserConstants;
-import com.example.usermanagement.exception.PasswordDoesNotMatchException;
 import com.example.usermanagement.exception.UserAlreadyExistsException;
 import com.example.usermanagement.repository.UserRepository;
 import com.example.usermanagement.utility.PasswordHelper;
@@ -16,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -39,41 +39,39 @@ public class UserService {
         this.authenticationManager = authenticationManager;
     }
 
-    public AuthenticationResponse create(CreateUserdto createUserdto) throws UserAlreadyExistsException {
+    public ResponseDto create(CreateUserDto createUserdto) throws UserAlreadyExistsException, EmptyFieldsException {
         User user = userRepository.findByUsername(createUserdto.getUsername());
         if (user != null) {
             throw new UserAlreadyExistsException(String.format(UserConstants.USER_ALREADY_EXISTS, user.getUsername()));
         }
         createUserdto.setPassword(passwordEncoder.encode(createUserdto.getPassword()));
-        return userMapper.createUserMapper(userRepository.save(userMapper.mapToUser(createUserdto)));
+        return userMapper.responseToUserMapper(userRepository.save(userMapper.mapToUser(createUserdto)));
     }
 
-    public AuthTokenResponse authenticate(LoginDto loginDto) {
+    public AuthTokenResponseDto authenticate(LoginDto loginDto) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-        var user = userRepository.findByUsername(loginDto.getUsername());
+        User user = userRepository.findByUsername(loginDto.getUsername());
         String jwtToken = jwtService.generateToken(user);
-        AuthTokenResponse authTokenResponse = new AuthTokenResponse();
-        authTokenResponse.setAccessToken(jwtToken);
-        return AuthTokenResponse.builder().accessToken(jwtToken).build();
+        return AuthTokenResponseDto.builder().accessToken(jwtToken).build();
     }
 
-    public Response update(UpdateUserDto updateUserDto, String username) throws UserNotExistException {
-        User user = userExisting.ifUserExist(username);
+    public ResponseDto update(UpdateUserDto updateUserDto, Long id) throws UserNotExistException {
+        User user = userExisting.ifUserExist(id);
         userMapper.updateMapper(updateUserDto, Optional.of(user));
         return  userMapper.responseToUserMapper(userRepository.save(user));
     }
 
-    public Response getUser(String username) {
-        User userexist = userExisting.ifUserExist(username);
-        return userMapper.responseToUserMapper(userexist);
+    public ResponseDto getUser(Long id) {
+        User userExists = userExisting.ifUserExist(id);
+        return userMapper.responseToUserMapper(userExists);
     }
 
-    public void deleteUser(String username) {
-        userRepository.delete(userExisting.ifUserExist(username));
+    public void deleteUser(Long id) {
+        userRepository.delete(userExisting.ifUserExist(id));
     }
 
-    public List<Response> getAll() throws UserNotExistException {
+    public List<ResponseDto> getAll() throws UserNotExistException {
         List<User> userList = userRepository.findAll();
         if (userList.isEmpty()) {
             throw new UserNotExistException(UserConstants.NO_USER);
@@ -81,15 +79,14 @@ public class UserService {
         return userMapper.getAllUserMapper(userList);
     }
 
-    public boolean updatePassword(UserPasswordDto userPasswordDto) throws PasswordDoesNotMatchException {
+    public void updatePassword(UserPasswordDto userPasswordDto) throws InvalidPasswordException {
         User user = userRepository.findByUsername(userPasswordDto.getUsername());
             if (PasswordHelper.matchPassword(userPasswordDto.getOldPassword(), user.getPassword())) {
                 String newEncryptedPassword = PasswordHelper.hashPassword(userPasswordDto.getNewPassword());
                 user.setPassword(newEncryptedPassword);
                 userRepository.save(user);
-                return true;
             }else {
-                throw new PasswordDoesNotMatchException(UserConstants.PASSWORD_MISMATCH);
+                throw new InvalidPasswordException(UserConstants.INVALID_PASSWORD);
             }
     }
 
