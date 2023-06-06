@@ -1,15 +1,12 @@
 package com.example.usermanagement.dto;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
 public class UpdateUserDto {
-
-    private String password;
 
     @JsonProperty("first_name")
     private String firstName;
@@ -17,10 +14,4 @@ public class UpdateUserDto {
     @JsonProperty("last_name")
     private String lastName;
 
-    @JsonProperty("role")
-    private String role;
-
-    @JsonProperty("updated_at")
-    @JsonIgnore
-    private LocalDateTime updatedAt = LocalDateTime.now();
-}
+  }
