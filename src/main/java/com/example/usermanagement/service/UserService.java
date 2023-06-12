@@ -4,21 +4,17 @@ package com.example.usermanagement.service;
 import com.example.usermanagement.dto.*;
 import com.example.usermanagement.dto.ResponseDto;
 import com.example.usermanagement.exception.InvalidPasswordException;
-import com.example.usermanagement.exception.UnauthorizedException;
 import com.example.usermanagement.model.User;
 import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.exception.UserAlreadyExistsException;
 import com.example.usermanagement.repository.UserRepository;
-import com.example.usermanagement.utility.PasswordHelper;
 import com.example.usermanagement.utility.UserValidation;
 import com.example.usermanagement.exception.UserNotExistException;
 import com.example.usermanagement.mapper.UserMapper;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,15 +24,16 @@ public class UserService {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserValidation userExisting;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public UserService(UserMapper userMapper, UserRepository userRepository, PasswordEncoder passwordEncoder, UserValidation userExisting, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public UserService(UserMapper userMapper, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, UserValidation userExisting, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+
         this.userExisting = userExisting;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
@@ -47,7 +44,7 @@ public class UserService {
         if (user != null) {
             throw new UserAlreadyExistsException(String.format(UserConstants.USER_ALREADY_EXISTS, user.getUsername()));
         }
-        createUserdto.setPassword(passwordEncoder.encode(createUserdto.getPassword()));
+        createUserdto.setPassword(bCryptPasswordEncoder.encode(createUserdto.getPassword()));
         return userMapper.responseToUserMapper(userRepository.save(userMapper.mapToUser(createUserdto)));
     }
 
@@ -83,9 +80,10 @@ public class UserService {
     }
 
     public void updatePassword(UserPasswordDto userPasswordDto) throws InvalidPasswordException {
+        BCryptPasswordEncoder bCryptPasswordEncoder1 =new BCryptPasswordEncoder();
         User user = userRepository.findByUsername(userPasswordDto.getUsername());
-            if (PasswordHelper.matchPassword(userPasswordDto.getOldPassword(), user.getPassword())) {
-                String newEncryptedPassword = PasswordHelper.hashPassword(userPasswordDto.getNewPassword());
+            if (bCryptPasswordEncoder1.matches(userPasswordDto.getOldPassword(), user.getPassword())) {
+                String newEncryptedPassword = bCryptPasswordEncoder1.encode(userPasswordDto.getNewPassword());
                 user.setPassword(newEncryptedPassword);
                 userRepository.save(user);
             }else {

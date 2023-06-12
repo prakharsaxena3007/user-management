@@ -2,6 +2,7 @@ package com.example.usermanagement.mapper;
 
 import com.example.usermanagement.constants.UserConstants;
 import com.example.usermanagement.dto.ResponseDto;
+import com.example.usermanagement.exception.UserNotExistException;
 import com.example.usermanagement.model.User;
 import com.example.usermanagement.dto.UpdateUserDto;
 import org.modelmapper.ModelMapper;
@@ -26,7 +27,7 @@ public class UserMapper {
             Optional.ofNullable(updateUserDto.getLastName()).ifPresent(existingUser::setLastName);
             user.get().setUpdatedAt(LocalDateTime.now());
         });
-        user.map(this::responseToUserMapper).orElseThrow(() -> new RuntimeException(UserConstants.USER_NOT_FOUND));
+        user.map(this::responseToUserMapper).orElseThrow(() -> new UserNotExistException(UserConstants.USERID_NOT_FOUND));
     }
 
     public List<ResponseDto> getAllUserMapper(List<User> userList) {
