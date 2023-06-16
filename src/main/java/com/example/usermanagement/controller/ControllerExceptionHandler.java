@@ -15,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 
 @ControllerAdvice
@@ -54,6 +55,11 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<BaseErrorDto> handleUnauthorisedException(AuthenticationException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BaseErrorDto(UserConstants.UNAUTHORISED));
+    }
+
+    @ExceptionHandler(WebClientResponseException.class)
+    public ResponseEntity<BaseErrorDto> handleWebClientResponseException(WebClientResponseException ex){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BaseErrorDto(UserConstants.UNAUTHORISED));
     }
 

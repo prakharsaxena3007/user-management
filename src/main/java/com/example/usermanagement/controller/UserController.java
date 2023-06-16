@@ -6,6 +6,7 @@ import com.example.usermanagement.dto.UserPasswordDto;
 import com.example.usermanagement.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class UserController {
 
     //Get all user
     @GetMapping
+    @PreAuthorize("hasRole(client_admin)")
     public ResponseEntity<List<ResponseDto>> getAllUsers() {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAll());
     }
