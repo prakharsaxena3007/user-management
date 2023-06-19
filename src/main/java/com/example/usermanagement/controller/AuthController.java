@@ -1,57 +1,39 @@
 package com.example.usermanagement.controller;
 
-
 import com.example.usermanagement.dto.*;
-import com.example.usermanagement.model.IntrospectResponse;
 import com.example.usermanagement.model.Response;
 import com.example.usermanagement.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final UserService userService;
-//    private final CustomKeycloakLogoutHandler logoutHandler;
-
-
-
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
-
+    
     @PostMapping(value = "register")
-    public ResponseEntity<ResponseDto> register(@Valid @RequestBody CreateUserDto createUserdto) {
+    public ResponseEntity<ResponseDTO> register(@Valid @RequestBody CreateUserDTO createUserdto) {
         return new ResponseEntity<>(userService.create(createUserdto), HttpStatus.CREATED);
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> authenticate(@Valid
-                                                   @RequestBody LoginDto loginDto) {
-        String tokenResponse = userService.authenticate(loginDto);
-        if (tokenResponse != null) {
-            return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+    public ResponseEntity<String> authenticate(@Valid @RequestBody LoginDTO loginDto) {
+        String response = userService.authenticate(loginDto);
+        if (response != null) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
     @PostMapping("logout")
-    public ResponseEntity<Response> logout(@RequestBody TokenRequestDto token) {
-            return userService.logout(token);
+    public ResponseEntity<Response> logout(@RequestHeader("refresh_token")String refreshToken, HttpServletRequest request) {
+            return userService.logout(refreshToken,request);
         }
-
-    @PostMapping("/introspect")
-    public ResponseEntity<IntrospectResponse> introspect(@RequestBody TokenRequestDto token) {
-        return userService.introspect(token);
-    }
-
-    }
+}

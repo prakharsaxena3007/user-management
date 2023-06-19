@@ -1,6 +1,6 @@
 package com.example.usermanagement.dto;
 
-public class TokenRequestDto {
+public class TokenRequestDTO {
 
     public String token;
 

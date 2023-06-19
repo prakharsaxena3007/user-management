@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class UserPasswordDto {
+public class UserPasswordDTO {
 
     private String username;
     private String oldPassword;
