@@ -10,9 +10,11 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebSecurity
+@EnableWebMvc
 public class SecurityConfig {
 
     @Bean
@@ -34,9 +36,9 @@ public class SecurityConfig {
                 .oauth2Login();
         http
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
-        http
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//        http
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         return http.build();
     }

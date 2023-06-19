@@ -68,14 +68,14 @@ public class UserService {
                 .block();
     }
 
-    public ResponseEntity<Response> logout(String refreshToken, HttpServletRequest request) {
+    public ResponseEntity<Response> logout(HttpServletRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add(CLIENT_ID, keycloakAdapterConfig.clientId);
         map.add(CLIENT_SECRET, keycloakAdapterConfig.clientSecret);
-        map.add("refresh_token", request.getHeader("refresh_token"));
+        map.add(request.getHeaderNames().nextElement(), request.getHeader("refresh_token"));
 
         return webClient.post()
                 .uri(keycloakAdapterConfig.endSessionUrl)
