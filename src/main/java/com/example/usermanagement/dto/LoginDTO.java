@@ -1,14 +1,14 @@
 package com.example.usermanagement.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class LoginDTO {
 
-    @NotEmpty(message = "Username cannot be null or empty")
+    @NotBlank(message = "Username cannot be null or empty")
     private String username;
 
-    @NotEmpty(message = "Password cannot be null or empty")
+    @NotBlank(message = "Password cannot be null or empty")
     private String password;
 }
