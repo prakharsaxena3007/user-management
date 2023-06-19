@@ -8,7 +8,6 @@ public class PasswordHelper {
     public static boolean matchPassword(String password, String passwordToMatch) {
         return encoder.matches(password, passwordToMatch);
     }
-
     public static String hashPassword(String password) {
         return encoder.encode(password);
     }

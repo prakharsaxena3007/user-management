@@ -3,11 +3,10 @@ package com.example.usermanagement.dto;
 import lombok.Data;
 
 @Data
-public class BaseErrorDto {
+public class BaseErrorDTO {
 
     private String message;
-
-    public BaseErrorDto(String message) {
+    public BaseErrorDTO(String message) {
         this.message = message;
     }
 }

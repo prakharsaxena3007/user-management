@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class CreateUserDto {
+public class CreateUserDTO {
 
     @NotEmpty(message = "Username is required!")
     @JsonProperty(value = "username", required = true)

@@ -1,9 +1,9 @@
 package com.example.usermanagement.mapper;
 
 import com.example.usermanagement.constants.UserConstants;
-import com.example.usermanagement.dto.ResponseDto;
+import com.example.usermanagement.dto.ResponseDTO;
 import com.example.usermanagement.model.User;
-import com.example.usermanagement.dto.UpdateUserDto;
+import com.example.usermanagement.dto.UpdateUserDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -16,11 +16,11 @@ public class UserMapper {
 
     ModelMapper modelMapper = new ModelMapper();
 
-    public ResponseDto responseToUserMapper(User user) {
-        return modelMapper.map(user, ResponseDto.class);
+    public ResponseDTO responseToUserMapper(User user) {
+        return modelMapper.map(user, ResponseDTO.class);
     }
 
-    public void updateMapper(UpdateUserDto updateUserDto, Optional<User> user) {
+    public void updateMapper(UpdateUserDTO updateUserDto, Optional<User> user) {
         user.ifPresent(existingUser -> {
             Optional.ofNullable(updateUserDto.getFirstName()).ifPresent(existingUser::setFirstName);
             Optional.ofNullable(updateUserDto.getLastName()).ifPresent(existingUser::setLastName);
@@ -29,7 +29,7 @@ public class UserMapper {
         user.map(this::responseToUserMapper).orElseThrow(() -> new RuntimeException(UserConstants.USER_NOT_FOUND));
     }
 
-    public List<ResponseDto> getAllUserMapper(List<User> userList) {
+    public List<ResponseDTO> getAllUserMapper(List<User> userList) {
         return userList.stream().map(this::responseToUserMapper).toList();
     }
 

@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthTokenResponseDto {
+public class AuthTokenResponseDTO {
 
     @JsonProperty("access_token")
     private String accessToken;

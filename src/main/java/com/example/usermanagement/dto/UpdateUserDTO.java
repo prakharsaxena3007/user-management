@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class UpdateUserDto {
+public class UpdateUserDTO {
 
     @JsonProperty("first_name")
     private String firstName;
