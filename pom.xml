@@ -15,6 +15,7 @@
     <description>UserManagement</description>
     <properties>
         <java.version>17</java.version>
+        <version.compiler.maven.plugin>3.11.0</version.compiler.maven.plugin>
     </properties>
     <dependencies>
         <dependency>
@@ -89,6 +90,27 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-server-spi</artifactId>
+            <version>21.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-core</artifactId>
+            <version>21.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-services</artifactId>
+            <version>21.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-model-legacy</artifactId>
+            <version>21.1.1</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -104,12 +126,21 @@
     </dependencyManagement>
 
     <build>
+        <finalName>user-management</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.example.usermanagement.UserManagementApplication</mainClass>
+                    <layout>JAR</layout>
+                </configuration>
             </plugin>
-        </plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version>
+        </plugin>
+    </plugins>
     </build>
-
 </project>
