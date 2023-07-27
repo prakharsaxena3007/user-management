@@ -519,6 +519,30 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "users": [
+      {
+        "id": "1",
+        "username": "john_doe",
+        "enabled": true,
+        "credentials": [
+          {
+            "type": "password",
+            "value": "johns_password",
+            "temporary": false
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "username": "jane_smith",
+        "enabled": true,
+        "credentials": [
+          {
+            "type": "password",
+            "value": "janes_password",
+            "temporary": false
+          }
+        ]
+      },
     {
       "username": "admin",
       "enabled": true,

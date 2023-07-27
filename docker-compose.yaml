@@ -19,6 +19,24 @@ services:
       - ./src/main/resources/static/:/opt/keycloak/data/import/
       - ./src/main/resources/static/:/opt/keycloak/providers/
 
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: opa
+    command:
+     - run
+     - --server
+     - --log-level=debug
+     - --addr=:8181
+     - --diagnostic-addr=:8282
+     - policy.rego
+    ports:
+      - "8181:8181"  # OPA API server
+      - "8282:8282"
+    networks:
+      - network-ums
+    volumes:
+      - /home/fiftyfive/Documents/OPA/policy.rego:/policy.rego
+
   db:
     image: postgres:15-alpine
     container_name: db
@@ -36,6 +54,7 @@ services:
     depends_on:
       - keycloak
       - db
+      - opa
     build:
       context: .
       dockerfile: Dockerfile

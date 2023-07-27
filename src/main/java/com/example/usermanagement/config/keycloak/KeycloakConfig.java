@@ -1,4 +1,4 @@
-package com.example.usermanagement.config;
+package com.example.usermanagement.config.keycloak;
 
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.springframework.context.annotation.Bean;
