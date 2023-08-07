@@ -19,23 +19,27 @@ services:
       - ./src/main/resources/static/:/opt/keycloak/data/import/
       - ./src/main/resources/static/:/opt/keycloak/providers/
 
-  opa:
-    image: openpolicyagent/opa:latest
-    container_name: opa
-    command:
-     - run
-     - --server
-     - --log-level=debug
-     - --addr=:8181
-     - --diagnostic-addr=:8282
-     - policy.rego
+  opal_server:
+    image: permitio/opal-server
+    environment:
+      - UVICORN_NUM_WORKERS=1
+      - OPAL_POLICY_REPO_URL=https://github.com/prakharsaxena3007/user-management
+      - OPAL_POLICY_REPO_POLLING_INTERVAL=30
     ports:
-      - "8181:8181"  # OPA API server
-      - "8282:8282"
-    networks:
-      - network-ums
-    volumes:
-      - /home/fiftyfive/Documents/OPA/policy.rego:/policy.rego
+      - "7002:7002"
+
+  opal_client:
+    image: permitio/opal-client
+    environment:
+      - OPAL_SERVER_URL=http://opal_server:7002
+      - OPAL_LOG_FORMAT_INCLUDE_PID=true
+      - OPAL_INLINE_OPA_LOG_FORMAT=http
+    ports:
+      - "7766:7000"
+      - "8181:8181"
+    depends_on:
+     - opal_server
+
 
   db:
     image: postgres:15-alpine
@@ -54,7 +58,7 @@ services:
     depends_on:
       - keycloak
       - db
-      - opa
+      - opal_client
     build:
       context: .
       dockerfile: Dockerfile
