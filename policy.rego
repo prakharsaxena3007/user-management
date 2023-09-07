@@ -20,8 +20,8 @@ allow if{
 
 allow if{
 	input.method =="PUT"
-	input.path = ["api","v1","users"]
-	input.role = "client_admin"
+	input.path = ["api","v1","users","update_password"]
+	input.role == "client_admin"
 	}
 	
 	
