@@ -7,7 +7,7 @@ default allow :=false
 
 allow if{
 	input.method =="GET"
-	input.path == ["api","v1","users","all-users"]
+	input.path = ["api","v1","users","all-users"]
     	input.role == "client_admin"
 	
 }
