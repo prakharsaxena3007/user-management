@@ -14,7 +14,7 @@ allow if{
 	
 allow if{
 	input.method =="POST"
-	input.path = ["api","v1","users","register"]
+	input.path = ["api","v1","users"]
 	input.role == "client_admin"
 	}
 
