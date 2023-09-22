@@ -519,30 +519,6 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "users": [
-      {
-        "id": "1",
-        "username": "john_doe",
-        "enabled": true,
-        "credentials": [
-          {
-            "type": "password",
-            "value": "johns_password",
-            "temporary": false
-          }
-        ]
-      },
-      {
-        "id": "2",
-        "username": "jane_smith",
-        "enabled": true,
-        "credentials": [
-          {
-            "type": "password",
-            "value": "janes_password",
-            "temporary": false
-          }
-        ]
-      },
     {
       "username": "admin",
       "enabled": true,
@@ -557,7 +533,7 @@
         }
       ],
       "realmRoles": [
-        "ADMIN"
+        "client_admin"
       ]
     },
     {
@@ -574,26 +550,8 @@
         }
       ],
       "realmRoles": [
-        "ROLE_OPERATOR"
+        "client_user"
       ]
-    }
-  ],
-  "users": [
-    {
-      "id": "4e72c753-3e06-4cf1-8b18-5d57fbcb1b27",
-      "createdTimestamp": 1686831937629,
-      "username": "service-account-user-management",
-      "enabled": true,
-      "totp": false,
-      "emailVerified": false,
-      "serviceAccountClientId": "user-management",
-      "disableableCredentialTypes": [],
-      "requiredActions": [],
-      "realmRoles": [
-        "default-roles-usermanagement"
-      ],
-      "notBefore": 0,
-      "groups": []
     }
   ],
   "scopeMappings": [
@@ -1651,6 +1609,22 @@
         "subComponents": {},
         "config": {
           "allow-default-scopes": [
+            "true"
+          ]
+        }
+      }
+    ],
+    "org.keycloak.storage.UserStorageProvider": [
+      {
+        "id": "e46e3d84-fc3c-4fbe-978d-3dc25a7d3123",
+        "name": "UserManagementSys",
+        "providerId": "keycloak-user-management",
+        "subComponents": {},
+        "config": {
+          "cachePolicy": [
+            "DEFAULT"
+          ],
+          "enabled": [
             "true"
           ]
         }

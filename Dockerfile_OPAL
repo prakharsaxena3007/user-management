@@ -1,0 +1,4 @@
+FROM permitio/opal-client:latest
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --user opal-fetcher-postgres
+RUN pip install wait-for

@@ -40,12 +40,10 @@ public class OPAAuthorizationManager implements AuthorizationManager<RequestAuth
             String payload = new String(decoder.decode(chunks[1]));
 
             JSONObject jsonObject = (JSONObject) JSONValue.parse(payload);
-            HashMap<String,Object> responseResourceHashMap = objectMapper.readValue(jsonObject.get("resource_access").toString(),
-                    new TypeReference<>() {
+            HashMap<String,Object> responseResourceHashMap = objectMapper.readValue(jsonObject.get("realm_access").toString(), new TypeReference<>() {
                     });
 
-            String realmRole =responseResourceHashMap.get("user-management").toString();
-            org.json.JSONObject jsonObject1 = new org.json.JSONObject(realmRole);
+            org.json.JSONObject jsonObject1 = new org.json.JSONObject(responseResourceHashMap);
             JSONArray jsonArray = jsonObject1.getJSONArray("roles");
             String role = jsonArray.getString(0);
 
