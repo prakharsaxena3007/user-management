@@ -31,7 +31,7 @@ public class ResponseDTO {
 
     @JsonProperty("role")
     @Enumerated(EnumType.STRING)
-    private Role role = Role.USER;
+    private Role role;
 
     @JsonProperty("created_at")
     private LocalDateTime createdAt;

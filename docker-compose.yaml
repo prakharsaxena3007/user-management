@@ -1,0 +1,78 @@
+version: '3.3'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: keycloak
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      - KEYCLOAK_ADMIN=badger
+      - KEYCLOAK_ADMIN_PASSWORD=1234
+      - KEYCLOAK_IMPORT="/opt/keycloak/data/import/* -Dkeycloak.profile.feature.upload_scripts=enabled"
+    ports:
+        - '8080:8080'
+    networks:
+      - network-ums
+    volumes:
+      - ./src/main/resources/static/:/opt/keycloak/data/import/
+      - ./src/main/resources/static/:/opt/keycloak/providers/
+
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: opa
+    command:
+     - run
+     - --server
+     - --log-level=debug
+     - --addr=:8181
+     - --diagnostic-addr=:8282
+     - policy.rego
+    ports:
+      - "8181:8181"  # OPA API server
+      - "8282:8282"
+    networks:
+      - network-ums
+    volumes:
+      - /home/fiftyfive/Documents/OPA/policy.rego:/policy.rego
+
+  db:
+    image: postgres:15-alpine
+    container_name: db
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=usermanagement
+    networks:
+      - network-ums
+
+  springapp:
+    container_name: usermanagementapp
+    depends_on:
+      - keycloak
+      - db
+      - opa
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8081:8081'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/usermanagement
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=test
+      - KEYCLOAK_URL=http://keycloak:8080/realms/usermanagement
+    networks:
+      - network-ums
+    restart: on-failure
+
+networks:
+    network-ums:
+      external: true
+
+
+
+      

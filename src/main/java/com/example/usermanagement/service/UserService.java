@@ -1,7 +1,6 @@
 package com.example.usermanagement.service;
 
-
-import com.example.usermanagement.config.KeycloakAdapterConfig;
+import com.example.usermanagement.config.keycloak.KeycloakAdapterConfig;
 import com.example.usermanagement.dto.*;
 import com.example.usermanagement.dto.ResponseDTO;
 import com.example.usermanagement.exception.InvalidPasswordException;
