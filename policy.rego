@@ -11,6 +11,14 @@ allow if{
     	input.role == "client_admin"
 	
 }
+
+allow if{
+	input.method =="GET"
+	input.path = ["bff","get-all-users"]
+    	input.role == "client_admin"
+	
+}
+
 	
 allow if{
 	input.method =="POST"
