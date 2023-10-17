@@ -15,7 +15,7 @@ allow if{
 allow if{
 	input.method =="GET"
 	input.path = ["bff","get-all-users"]
-    	input.role == "client_admin"
+    	input.role == "client_user"
 	
 }
 
