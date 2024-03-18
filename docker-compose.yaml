@@ -1,0 +1,105 @@
+version: '3.3'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: keycloak
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      - KEYCLOAK_ADMIN=badger
+      - KEYCLOAK_ADMIN_PASSWORD=1234
+      - KEYCLOAK_IMPORT="/opt/keycloak/data/import/* -Dkeycloak.profile.feature.upload_scripts=enabled"
+    ports:
+        - '8080:8080'
+    networks:
+      - network-ums
+    volumes:
+      - ./src/main/resources/static/:/opt/keycloak/data/import/
+      - ./src/main/resources/static/:/opt/keycloak/providers/
+
+  opal_server:
+    image: permitio/opal-server:latest
+    environment:
+      - UVICORN_NUM_WORKERS=1
+      - OPAL_POLICY_REPO_URL=https://github.com/prakharsaxena3007/user-management
+      - OPAL_POLICY_REPO_WEBHOOK_SECRET=${OPAL_AUTH_MASTER_TOKEN}
+      - OPAL_POLICY_REPO_WEBHOOK_PARAMS={"secret_header_name":"x-webhook-token","secret_type":"token","secret_parsing_regex":"(.*)","event_request_key":"gitEvent","push_event_value":"git.push"}
+      - OPAL_AUTH_PUBLIC_KEY=${OPAL_AUTH_PUBLIC_KEY}
+      - OPAL_AUTH_PRIVATE_KEY=${OPAL_AUTH_PRIVATE_KEY}
+      - OPAL_AUTH_MASTER_TOKEN=${OPAL_AUTH_MASTER_TOKEN}
+      - OPAL_AUTH_JWT_AUDIENCE=https://api.opal.ac/v1/
+      - OPAL_AUTH_JWT_ISSUER=https://opal.ac/
+      - OPAL_DATA_CONFIG_SOURCES={"config":{"entries":[{"url":"postgresql://db:5432/usermanagement?user=postgres&password=test","config":{"headers":{"Authorization":"Bearer ${OPAL_CLIENT_TOKEN}"},"fetcher":"PostgresFetchProvider","query":"SELECT * from public.user;","connection_params":{"password":"test"},"fetch_key":"id"},"topics":["policy_data"],"dst_path":"user"}]}}
+
+    ports:
+      - "7002:7002"
+    networks:
+          - network-ums
+
+
+  opal_client:
+    container_name: opal-client
+    build:
+      context: ./
+      dockerfile: Dockerfile_OPAL
+    environment:
+      - OPAL_SERVER_URL=http://opal_server:7002
+      - OPAL_LOG_FORMAT_INCLUDE_PID=true
+      - OPAL_CLIENT_TOKEN=${OPAL_CLIENT_TOKEN}
+      - OPAL_INLINE_OPA_LOG_FORMAT=http
+      - OPAL_FETCH_PROVIDER_MODULES=opal_common.fetcher.providers,opal_fetcher_postgres.provider
+      - OPAL_AUTH_JWT_AUDIENCE=https://api.opal.ac/v1/
+      - OPAL_AUTH_JWT_ISSUER=https://opal.ac/
+    ports:
+      - "7766:7000"
+      - "8181:8181"
+    depends_on:
+     - opal_server
+     - db
+    networks:
+      - network-ums
+    command: sh -c "wait-for.sh opal_server:7002 db:5432 --timeout 60 -- /start.sh"
+
+
+  db:
+    image: postgres:15-alpine
+    container_name: db
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    networks:
+      - network-ums
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./src/main/resources/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+
+  springapp:
+    container_name: usermanagementapp
+    depends_on:
+      - keycloak
+      - db
+      - opal_client
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8081:8081'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/usermanagement
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=test
+      - KEYCLOAK_URL=http://keycloak:8080/realms/usermanagement
+      - APP_OPA_AUTHZ_URL=http://opal_client:8181/v1/data
+    networks:
+      - network-ums
+    restart: on-failure
+
+networks:
+    network-ums:
+      external: true
+
+      

@@ -1,7 +1,6 @@
 package com.example.usermanagement.service;
 
-
-import com.example.usermanagement.config.KeycloakAdapterConfig;
+import com.example.usermanagement.config.keycloak.KeycloakAdapterConfig;
 import com.example.usermanagement.dto.*;
 import com.example.usermanagement.dto.ResponseDTO;
 import com.example.usermanagement.exception.InvalidPasswordException;
@@ -17,6 +16,7 @@ import com.example.usermanagement.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -35,6 +35,7 @@ public class UserService {
     private final UserValidation userExisting;
     private final WebClient webClient;
     private final KeycloakAdapterConfig keycloakAdapterConfig;
+    private final PasswordEncoder passwordEncoder;
 
     public static final String CLIENT_ID = "client_id";
     public static final String CLIENT_SECRET = "client_secret";
@@ -45,6 +46,7 @@ public class UserService {
         if (user != null) {
             throw new UserAlreadyExistsException(String.format(UserConstants.USER_ALREADY_EXISTS, user.getUsername()));
         }
+        createUserdto.setPassword(passwordEncoder.encode(createUserdto.getPassword()));
         return userMapper.responseToUserMapper(userRepository.save(userMapper.mapToUser(createUserdto)));
     }
 
@@ -112,6 +114,7 @@ public class UserService {
         if (userList.isEmpty()) {
             throw new UserNotExistException(UserConstants.NO_USER);
         }
+
         return userMapper.getAllUserMapper(userList);
     }
 
